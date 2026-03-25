@@ -1,0 +1,292 @@
+/* frontend/src/pages/ARIAInterview.css */
+
+@keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.5} }
+@keyframes bob     { from{transform:translateY(0)} to{transform:translateY(-6px)} }
+@keyframes blink   { 0%,93%,100%{transform:scaleY(1)} 96%{transform:scaleY(0.1)} }
+@keyframes talking { 0%,100%{height:8px} 50%{height:18px} }
+@keyframes barUp   { from{height:20%} to{height:100%} }
+@keyframes spin    { to{transform:rotate(360deg)} }
+
+.aria-interview-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #080811;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+/* Header */
+.aria-interview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: #0d0d1a;
+  border-bottom: 1px solid #1e1b3a;
+  flex-shrink: 0;
+}
+.aria-header-left { display:flex; align-items:center; gap:12px; }
+.aria-live-dot    { width:8px; height:8px; border-radius:50%; background:#ef4444; animation:pulse 1.5s infinite; }
+.aria-header-title { font-size:16px; font-weight:700; color:#f1f5f9; }
+.aria-header-meta  { font-size:13px; color:#475569; }
+.aria-header-right { display:flex; align-items:center; gap:16px; }
+.aria-header-q     { font-size:14px; color:#667eea; font-weight:600; }
+.aria-end-btn {
+  padding:8px 18px; border-radius:8px;
+  border:1px solid #ef4444; background:transparent;
+  color:#ef4444; font-size:13px; cursor:pointer;
+  transition:all .15s;
+}
+.aria-end-btn:hover { background:#ef444420; }
+
+/* Body */
+.aria-interview-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Video column */
+.aria-video-col {
+  width: 320px;
+  min-width: 280px;
+  background: #0d0d1a;
+  border-right: 1px solid #1e1b3a;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* ARIA avatar feed */
+.aria-avatar-feed {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #1e1b3a;
+  transition: border-color 0.3s;
+  flex-shrink: 0;
+}
+.aria-avatar-feed.aria-speaking { border-color: #667eea; box-shadow: 0 0 20px #667eea33; }
+
+.aria-avatar-bg {
+  background: radial-gradient(ellipse at center, #1a1040 0%, #06040f 70%);
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+}
+
+.aria-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: bob 2s ease-in-out infinite alternate;
+}
+.aria-eyes { display:flex; gap:18px; }
+.aria-eye  {
+  width:18px; height:18px; background:white; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  animation: blink 3.5s infinite;
+}
+.aria-pupil { width:8px; height:8px; background:#1a1a2e; border-radius:50%; }
+.aria-mouth {
+  width:32px; height:8px;
+  border:3px solid #c0392b; border-top:none;
+  border-radius:0 0 40px 40px;
+  transition:height .1s;
+}
+.aria-mouth.talking { animation: talking .2s ease-in-out infinite alternate; }
+
+.aria-bars {
+  display:flex; align-items:flex-end; gap:3px; height:30px;
+}
+.aria-bar {
+  width:4px; background:#667eea; border-radius:2px;
+  animation:barUp .4s ease-in-out infinite alternate;
+}
+
+.aria-feed-label {
+  display:flex; align-items:center; gap:6px;
+  padding:8px 12px; background:#0a0a14;
+  font-size:12px; color:#94a3b8;
+}
+.aria-status-dot {
+  width:6px; height:6px; border-radius:50%; background:#475569;
+}
+.aria-status-dot.green { background:#10b981; }
+
+.aria-caption {
+  position:absolute; bottom:40px; left:0; right:0;
+  background:rgba(0,0,0,.7); padding:8px 12px;
+  font-size:12px; color:#e2e8f0; line-height:1.5;
+  text-align:center;
+}
+
+/* User feed */
+.aria-user-feed {
+  position:relative; border-radius:12px; overflow:hidden;
+  border:1px solid #1e1b3a; flex-shrink:0;
+}
+.aria-user-video { width:100%; height:160px; object-fit:cover; display:block; }
+.aria-cam-off {
+  height:160px; background:#0f172a;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:8px; color:#475569; font-size:13px;
+}
+.aria-cam-off span:first-child { font-size:28px; }
+
+/* Controls */
+.aria-controls {
+  display:flex; gap:10px; justify-content:center;
+  padding:8px 0;
+}
+.aria-ctrl-btn {
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid #1e293b; background:#0f172a;
+  font-size:18px; cursor:pointer; transition:all .15s;
+  display:flex; align-items:center; justify-content:center;
+}
+.aria-ctrl-btn:hover  { border-color:#667eea; }
+.aria-ctrl-btn.danger { border-color:#ef4444; background:#ef444415; }
+
+/* QA column */
+.aria-qa-col {
+  flex:1;
+  padding:24px 28px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.aria-loading {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:16px; color:#64748b; font-size:15px;
+}
+.aria-spinner {
+  width:36px; height:36px; border:3px solid #1e293b;
+  border-top-color:#667eea; border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+
+/* Timer */
+.aria-timer-row {
+  display:flex; justify-content:space-between; align-items:center;
+}
+.aria-timer-bar {
+  height:6px; background:#1e293b; border-radius:4px; overflow:hidden;
+}
+
+/* Question */
+.aria-question-box {
+  background:#111827; border:1px solid #1e293b;
+  border-radius:14px; padding:20px 24px;
+}
+.aria-q-header {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:12px;
+}
+.aria-q-badge {
+  background:#667eea22; color:#a78bfa;
+  font-size:12px; font-weight:700;
+  padding:3px 12px; border-radius:12px;
+  border:1px solid #667eea44;
+}
+.aria-replay-btn {
+  background:none; border:1px solid #1e293b;
+  border-radius:8px; color:#64748b;
+  font-size:12px; padding:4px 12px; cursor:pointer;
+  transition:all .15s;
+}
+.aria-replay-btn:hover:not(:disabled) { border-color:#667eea; color:#667eea; }
+.aria-q-text { font-size:17px; color:#f1f5f9; line-height:1.65; margin:0; }
+
+/* Answer */
+.aria-ans-label { font-size:13px; color:#64748b; font-weight:600; }
+.aria-textarea {
+  width:100%; padding:14px 16px;
+  background:#0f172a; border:1px solid #1e293b;
+  border-radius:12px; color:#e2e8f0; font-size:14px;
+  line-height:1.7; resize:vertical; outline:none;
+  box-sizing:border-box; font-family:inherit;
+  transition:border-color .15s;
+}
+.aria-textarea:focus { border-color:#667eea; }
+
+/* Indicators */
+.aria-indicators { display:flex; gap:8px; flex-wrap:wrap; }
+.aria-indicator {
+  font-size:12px; padding:4px 12px;
+  border-radius:12px;
+}
+
+/* Action row */
+.aria-action-row { display:flex; gap:10px; }
+.aria-btn-primary {
+  flex:1; padding:13px; border-radius:10px; border:none;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:white; font-size:14px; font-weight:700; cursor:pointer;
+  transition:opacity .15s;
+}
+.aria-btn-primary:disabled { opacity:.4; cursor:not-allowed; }
+.aria-btn-primary:not(:disabled):hover { opacity:.9; }
+.aria-btn-ghost {
+  padding:13px 20px; border-radius:10px;
+  border:1px solid #1e293b; background:transparent;
+  color:#64748b; font-size:14px; cursor:pointer;
+  transition:all .15s;
+}
+.aria-btn-ghost:hover:not(:disabled) { border-color:#667eea; color:#667eea; }
+
+/* Report */
+.aria-report { display:flex; flex-direction:column; gap:16px; }
+.aria-report-header {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding-bottom:16px; border-bottom:1px solid #1e293b;
+}
+.aria-report-header h2 { font-size:22px; font-weight:700; margin:0 0 4px; }
+.aria-report-header p  { font-size:13px; color:#64748b; margin:0; }
+.aria-overall-score    { text-align:center; }
+.aria-score-num  { font-size:40px; font-weight:900; color:#667eea; }
+.aria-score-label{ font-size:12px; color:#64748b; }
+
+.aria-report-stats { display:flex; gap:12px; }
+.aria-stat {
+  flex:1; background:#111827; border:1px solid #1e293b;
+  border-radius:10px; padding:12px; text-align:center;
+}
+.aria-stat-n { font-size:22px; font-weight:800; color:#f1f5f9; }
+.aria-stat-l { font-size:11px; color:#64748b; margin-top:2px; }
+
+.aria-report-card {
+  background:#111827; border:1px solid #1e293b;
+  border-radius:14px; padding:18px 20px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.aria-rc-top   { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.aria-rc-badge { font-size:11px; color:#667eea; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+.aria-rc-q     { font-size:14px; color:#e2e8f0; font-weight:500; margin:4px 0 0; }
+.aria-rc-meta  { display:flex; gap:12px; font-size:12px; color:#64748b; }
+.aria-rc-answer{ background:#0f172a; border-radius:8px; padding:10px 14px; font-size:13px; color:#94a3b8; font-style:italic; }
+.aria-rc-analysis { font-size:13px; color:#cbd5e1; margin:0; }
+.aria-rc-strengths    { background:rgba(16,185,129,.08); border-left:3px solid #10b981; padding:10px 14px; border-radius:0 8px 8px 0; }
+.aria-rc-improvements { background:rgba(251,191,36,.08); border-left:3px solid #f59e0b; padding:10px 14px; border-radius:0 8px 8px 0; }
+.aria-rc-section-title { font-size:12px; font-weight:700; margin:0 0 6px; }
+.aria-rc-point { font-size:13px; color:#94a3b8; margin:3px 0; }
+
+@media (max-width:768px) {
+  .aria-interview-body { flex-direction:column; }
+  .aria-video-col { width:100%; min-width:unset; border-right:none; border-bottom:1px solid #1e1b3a; flex-direction:row; flex-wrap:wrap; }
+  .aria-avatar-bg { height:140px; }
+  .aria-user-video,.aria-cam-off { height:120px; }
+}

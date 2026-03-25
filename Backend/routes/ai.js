@@ -1,22 +1,14 @@
-// backend/routes/ai.js
-const express = require('express');
-const router = express.Router();
+const express      = require('express');
+const router       = express.Router();
 const aiController = require('../controllers/aiController');
-const { protect } = require('../middleware/auth');
+const { protect }  = require('../middleware/auth');
 
-// All routes are protected
-router.use(protect);
+console.log("🚨 THIS ROUTE FILE IS BEING USED");
 
-// Generate interview questions
 router.post('/generate-questions', aiController.generateQuestions);
-
-// Analyze answer
-router.post('/analyze-answer', aiController.analyzeAnswer);
-
-// Generate interview summary
-router.post('/generate-summary', aiController.generateSummary);
-
-// Get AI response
-router.post('/ai-response', aiController.getAIResponse);
+router.post('/analyze-answer',     aiController.analyzeAnswer);
+router.post('/get-response',       aiController.getAIResponse);
+router.post('/save-report',  protect, aiController.saveReport);
+router.get('/my-reports',    protect, aiController.getMyReports);
 
 module.exports = router;

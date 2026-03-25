@@ -1,127 +1,96 @@
-// backend/controllers/aiController.js
-const aiService = require('../services/aiService');
+const Report    = require('../models/Report');
+const aiService = require('../services/groqService'); // ✅ exact filename
 
-// Generate interview questions
+// ✅ GENERATE QUESTIONS
 exports.generateQuestions = async (req, res) => {
   try {
-    const { role, count } = req.body;
+    const { role, count = 5 } = req.body;
 
     if (!role) {
-      return res.status(400).json({
-        success: false,
-        message: 'Role is required'
-      });
+      return res.status(400).json({ success: false, message: 'Role is required' });
     }
 
-    const questions = await aiService.generateInterviewQuestions(
-      role, 
-      count || 5
+    const rawQuestions = await aiService.generateQuestions(role, count);
+
+    const questions = rawQuestions.map((q) =>
+      typeof q === 'string' ? q : q.question
     );
 
-    res.status(200).json({
-      success: true,
-      questions
-    });
+    res.status(200).json({ success: true, questions });
 
   } catch (error) {
-    console.error('Generate questions error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error generating questions',
-      error: error.message
-    });
+    console.error("Question generation error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to generate questions" });
   }
 };
 
-// Analyze answer
+// ✅ ANALYZE ANSWER
 exports.analyzeAnswer = async (req, res) => {
   try {
-    const { question, answer } = req.body;
+    const { question, answer, role = '' } = req.body;
 
     if (!question || !answer) {
-      return res.status(400).json({
-        success: false,
-        message: 'Question and answer are required'
-      });
+      return res.status(400).json({ success: false, message: 'question and answer are required' });
     }
 
-    const analysis = await aiService.analyzeAnswer(question, answer);
+    console.log("📥 analyzeAnswer called for role:", role);
+
+    const result = await aiService.analyzeAnswer(question, answer, role);
+
+    console.log("📤 analyzeAnswer result:", result);
 
     res.status(200).json({
-      success: true,
-      analysis
+      success:      true,
+      analysis:     result.analysis     || '',
+      score:        result.score        ?? 50,
+      strengths:    result.strengths    || [],
+      improvements: result.improvements || [],
     });
 
   } catch (error) {
-    console.error('Analyze answer error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error analyzing answer',
-      error: error.message
-    });
+    console.error("Analyze answer error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to analyze answer" });
   }
 };
 
-// Generate interview summary
-exports.generateSummary = async (req, res) => {
-  try {
-    const { transcript, duration } = req.body;
-
-    if (!transcript) {
-      return res.status(400).json({
-        success: false,
-        message: 'Transcript is required'
-      });
-    }
-
-    const summary = await aiService.generateInterviewSummary(
-      transcript, 
-      duration || 30
-    );
-
-    res.status(200).json({
-      success: true,
-      summary
-    });
-
-  } catch (error) {
-    console.error('Generate summary error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error generating summary',
-      error: error.message
-    });
-  }
-};
-
-// Get AI response during interview
+// ✅ GET AI RESPONSE
 exports.getAIResponse = async (req, res) => {
   try {
-    const { context, message } = req.body;
-
-    if (!message) {
-      return res.status(400).json({
-        success: false,
-        message: 'Message is required'
-      });
-    }
-
-    const aiResponse = await aiService.generateAIResponse(
-      context || 'Interview in progress', 
-      message
-    );
-
-    res.status(200).json({
-      success: true,
-      response: aiResponse
-    });
-
+    const { context = '', userMessage = '' } = req.body;
+    const response = await aiService.generateAIResponse(context, userMessage);
+    res.status(200).json({ success: true, response });
   } catch (error) {
-    console.error('Get AI response error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error getting AI response',
-      error: error.message
+    console.error("AI response error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to get AI response" });
+  }
+};
+
+// ✅ SAVE REPORT
+exports.saveReport = async (req, res) => {
+  try {
+    const { answers, feedback } = req.body;
+    const report = await Report.create({
+      user:     req.user ? req.user.id : null,
+      answers,
+      feedback,
     });
+    res.status(201).json({ success: true, report });
+  } catch (error) {
+    console.error("Save report error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to save report" });
+  }
+};
+
+// ✅ GET REPORTS
+exports.getMyReports = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "User not authenticated" });
+    }
+    const reports = await Report.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, reports });
+  } catch (error) {
+    console.error("Get reports error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to fetch reports" });
   }
 };

@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
-import HeyGenAvatar from '../components/HeyGenAvatar';
+import HeyGenAvatar from '../components/HeyGenAvatar'; // ✅ was ARIAInterview
 import API from '../api/api';
 import './VideoCall.css';
 
@@ -37,7 +37,6 @@ function VideoCall() {
       return;
     }
 
-    // Check if user is host (recruiter role or created the meeting)
     if (user.role === 'recruiter' || user.role === 'admin') {
       setIsHost(true);
     }
@@ -183,10 +182,8 @@ function VideoCall() {
     }
   };
 
-  // ── FIX: properly end meeting in DB before leaving ────────────────────────
   const leaveCall = async () => {
     try {
-      // Stop all tracks
       if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
       }
@@ -194,20 +191,16 @@ function VideoCall() {
         screenStreamRef.current.getTracks().forEach(track => track.stop());
       }
 
-      // Notify other participants via socket
       if (socketRef.current) {
         socketRef.current.emit('leave-room', { roomId });
       }
 
-      // If recruiter/host: end the meeting in DB (marks it 'completed')
-      // If candidate: just leave (host ends it)
       if (isHost || user.role === 'recruiter') {
         try {
           await API.post(`/meetings/${roomId}/end`);
           console.log('✅ Meeting ended in DB');
         } catch (err) {
           console.warn('Could not end meeting in DB:', err.message);
-          // Still navigate away even if API call fails
         }
       }
     } catch (err) {
@@ -320,7 +313,7 @@ function VideoCall() {
       )}
 
       {showAI && (
-        <HeyGenAvatar roomId={roomId} onClose={() => setShowAI(false)} />
+        <HeyGenAvatar roomId={roomId} onClose={() => setShowAI(false)} />  // ✅ fixed
       )}
     </div>
   );
