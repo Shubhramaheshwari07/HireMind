@@ -1,46 +1,46 @@
 // frontend/src/api/api.js
+
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api'
+  baseURL: 'http://localhost:5000/api',
+  headers: { 'Content-Type': 'application/json' },
 });
 
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-API.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+// ─── Auth ─────────────────────────
+export const signup       = (data) => API.post('/auth/signup', data);
+export const login        = (data) => API.post('/auth/login', data);   // ✅ added — Login.jsx uses this
+export const loginUser    = (data) => API.post('/auth/login', data);   // kept for compatibility
+export const registerUser = (data) => API.post('/auth/signup', data);  // kept for compatibility
 
-export const signup = (userData) => API.post('/auth/signup', userData);
-export const login = (credentials) => API.post('/auth/login', credentials);
-export const getMe = () => API.get('/auth/me');
-export const logout = () => API.post('/auth/logout');
+// ─── Meetings ─────────────────────
+export const createMeeting = (data)   => API.post('/meetings/create', data);
+export const getMyMeetings = ()       => API.get('/meetings/my-meetings');
+export const endMeeting    = (roomId) => API.post(`/meetings/${roomId}/end`);
 
-// ==================== AI APIs ====================
-export const generateQuestions = (role, count) => 
+// ─── Reports ──────────────────────
+export const saveReport   = (data) => API.post('/reports/save', data);
+export const getMyReports = ()     => API.get('/reports/my-reports');
+
+// ─── AI ───────────────────────────
+
+// Returns full axios response so callers read response.data.questions
+export const generateQuestions = (role, count = 5) =>
   API.post('/ai/generate-questions', { role, count });
 
-export const analyzeAnswer = (question, answer) => 
-  API.post('/ai/analyze-answer', { question, answer });
+export const analyzeAnswer = (question, answer, role = '') =>
+  API.post('/ai/analyze-answer', { question, answer, role });
 
-export const generateSummary = (transcript, duration) => 
-  API.post('/ai/generate-summary', { transcript, duration });
+export const getAIResponse = (context, userMessage) =>
+  API.post('/ai/get-response', { context, userMessage });
 
-export const getAIResponse = (context, message) => 
-  API.post('/ai/ai-response', { context, message });
+export const generateFullReport = (role, records) =>
+  API.post('/ai/full-report', { role, records });
 
 export default API;
